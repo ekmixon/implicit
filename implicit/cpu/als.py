@@ -271,8 +271,8 @@ class AlternatingLeastSquares(MatrixFactorizationBase):
             else:
                 heapq.heappushpop(h, contribution)
 
-        items = (heapq.heappop(h) for i in range(len(h)))
-        top_contributions = list((i, s) for s, i in items)[::-1]
+        items = (heapq.heappop(h) for _ in range(len(h)))
+        top_contributions = [(i, s) for s, i in items][::-1]
         return total_score, top_contributions, user_weights
 
     @property
@@ -380,7 +380,7 @@ def least_squares_cg(Cui, X, Y, regularization, num_threads=0, cg_steps=3):
         if rsold < 1e-20:
             continue
 
-        for it in range(cg_steps):
+        for _ in range(cg_steps):
             # calculate Ap = YtCuYp - without actually calculating YtCuY
             Ap = YtY.dot(p)
             for i, confidence in nonzeros(Cui, u):

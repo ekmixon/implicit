@@ -71,7 +71,7 @@ def calculate_similar_movies(output_filename, model_name="als", min_rating=4.0, 
         model = BM25Recommender(B=0.2)
 
     else:
-        raise NotImplementedError("TODO: model %s" % model_name)
+        raise NotImplementedError(f"TODO: model {model_name}")
 
     # train the model
     log.debug("training model %s", model_name)

@@ -75,7 +75,7 @@ def run_benchmark(args):
 
     print("QMF finished in", qmf_time)
     print("Implicit finished in", implicit_time)
-    print("Implicit is %s times faster" % (qmf_time / implicit_time))
+    print(f"Implicit is {qmf_time / implicit_time} times faster")
 
 
 if __name__ == "__main__":

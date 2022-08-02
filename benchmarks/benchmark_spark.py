@@ -101,20 +101,19 @@ if __name__ == "__main__":
     )
     parser.add_argument("--output", type=str, required=True, help="output file location")
     args = parser.parse_args()
-    if not (args.speed or args.loss):
+    if not args.speed and not args.loss:
         print("must specify at least one of --speed or --loss")
         parser.print_help()
 
     m = scipy.io.mmread(args.inputfile)
 
-    times = {}
     factors = list(range(64, 257, 64))
 
-    times["Implicit (GPU)"] = benchmark_implicit(m, factors, use_gpu=True)
+    times = {"Implicit (GPU)": benchmark_implicit(m, factors, use_gpu=True)}
     times["Spark MLlib"] = benchmark_spark(m, factors)
     times["Implicit (CPU)"] = benchmark_implicit(m, factors, use_gpu=False)
 
     print(times)
-    generate_graph(times, factors, filename=args.output + ".png")
+    generate_graph(times, factors, filename=f"{args.output}.png")
 
-    json.dump(times, open(args.output + ".json", "w"))
+    json.dump(times, open(f"{args.output}.json", "w"))

@@ -88,7 +88,10 @@ def _join_summary_file(data, summary_filename="msd_summary_file.h5"):
     msd = h5py.File(summary_filename)
 
     # create a lookup table of trackid -> position
-    track_lookup = dict((t.encode("utf8"), i) for i, t in enumerate(data["track"].cat.categories))
+    track_lookup = {
+        t.encode("utf8"): i for i, t in enumerate(data["track"].cat.categories)
+    }
+
 
     # join on trackid to the summary file to get the artist/album/songname
     track_info = np.empty(shape=(len(track_lookup), 4), dtype=np.object)

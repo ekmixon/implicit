@@ -29,10 +29,7 @@ def locate_cuda():
 
     If nvcc can't be found, this returns None
     """
-    nvcc_bin = "nvcc"
-    if sys.platform.startswith("win"):
-        nvcc_bin = "nvcc.exe"
-
+    nvcc_bin = "nvcc.exe" if sys.platform.startswith("win") else "nvcc"
     # first check if the CUDAHOME env variable is in use
     nvcc = None
     if "CUDAHOME" in os.environ:
@@ -188,10 +185,7 @@ class cuda_build_ext(setuptools_build_ext):
                     try:
                         return func(*args, **kwargs)
                     except errors.DistutilsPlatformError:
-                        if not sys.platform == "win32":
-                            CCompiler = _UnixCCompiler
-                        else:
-                            CCompiler = _MSVCCompiler
+                        CCompiler = _UnixCCompiler if sys.platform != "win32" else _MSVCCompiler
                         return CCompiler(None, kwargs["dry_run"], kwargs["force"])
 
                 return _wrap_new_compiler

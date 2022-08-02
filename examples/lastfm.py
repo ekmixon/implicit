@@ -45,7 +45,7 @@ MODELS = {
 
 
 def get_model(model_name):
-    print("getting model %s" % model_name)
+    print(f"getting model {model_name}")
     model_class = MODELS.get(model_name)
     if not model_class:
         raise ValueError("Unknown Model '%s'" % model_name)
@@ -167,8 +167,9 @@ if __name__ == "__main__":
         type=str,
         default="als",
         dest="model",
-        help="model to calculate (%s)" % "/".join(MODELS.keys()),
+        help=f'model to calculate ({"/".join(MODELS.keys())})',
     )
+
     parser.add_argument(
         "--recommend",
         help="Recommend items for each user rather than calculate similar_items",

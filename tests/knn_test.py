@@ -55,10 +55,12 @@ class NearestNeighboursTest(unittest.TestCase):
             row = all_neighbours[rowid]
             self.assertEqual(
                 set(knn[rowid].indices),
-                set(
+                {
                     colid
-                    for colid, _ in sorted(zip(row.indices, row.data), key=lambda x: -x[1])[:K]
-                ),
+                    for colid, _ in sorted(
+                        zip(row.indices, row.data), key=lambda x: -x[1]
+                    )[:K]
+                },
             )
 
 

@@ -26,8 +26,8 @@ def define_extensions():
     else:
         gcc = extract_gcc_binaries()
         if gcc is not None:
-            rpath = "/usr/local/opt/gcc/lib/gcc/" + gcc[-1] + "/"
-            link_args = ["-Wl,-rpath," + rpath]
+            rpath = f"/usr/local/opt/gcc/lib/gcc/{gcc[-1]}/"
+            link_args = [f"-Wl,-rpath,{rpath}"]
         else:
             link_args = []
 
@@ -48,7 +48,7 @@ def define_extensions():
     src_ext = ".pyx"
     modules = [
         Extension(
-            "implicit." + name,
+            f"implicit.{name}",
             [os.path.join("implicit", name + src_ext)],
             language="c++",
             extra_compile_args=compile_args,
@@ -56,10 +56,11 @@ def define_extensions():
         )
         for name in ["_nearest_neighbours", "lmf", "evaluation"]
     ]
+
     modules.extend(
         [
             Extension(
-                "implicit.cpu." + name,
+                f"implicit.cpu.{name}",
                 [os.path.join("implicit", "cpu", name + src_ext)],
                 language="c++",
                 extra_compile_args=compile_args,
@@ -68,11 +69,12 @@ def define_extensions():
             for name in ["_als", "bpr"]
         ]
     )
+
     modules.append(
         Extension(
             "implicit." + "recommender_base",
             [
-                os.path.join("implicit", "recommender_base" + src_ext),
+                os.path.join("implicit", f"recommender_base{src_ext}"),
                 os.path.join("implicit", "topnc.cpp"),
             ],
             language="c++",
@@ -80,6 +82,7 @@ def define_extensions():
             extra_link_args=link_args,
         )
     )
+
 
     if CUDA:
         conda_prefix = os.getenv("CONDA_PREFIX")
@@ -93,7 +96,7 @@ def define_extensions():
             Extension(
                 "implicit.gpu._cuda",
                 [
-                    os.path.join("implicit", "gpu", "_cuda" + src_ext),
+                    os.path.join("implicit", "gpu", f"_cuda{src_ext}"),
                     os.path.join("implicit", "gpu", "als.cu"),
                     os.path.join("implicit", "gpu", "bpr.cu"),
                     os.path.join("implicit", "gpu", "matrix.cu"),
@@ -109,6 +112,7 @@ def define_extensions():
                 include_dirs=include_dirs,
             )
         )
+
     else:
         print("Failed to find CUDA toolkit. Building without GPU acceleration.")
 
@@ -121,22 +125,21 @@ def define_extensions():
 
 def extract_gcc_binaries():
     """Try to find GCC on OSX for OpenMP support."""
+    if platform.system() != "Darwin":
+        return None
+    gcc_binaries = []
     patterns = [
         "/opt/local/bin/g++-mp-[0-9]*.[0-9]*",
         "/opt/local/bin/g++-mp-[0-9]*",
         "/usr/local/bin/g++-[0-9]*.[0-9]*",
         "/usr/local/bin/g++-[0-9]*",
     ]
-    if platform.system() == "Darwin":
-        gcc_binaries = []
-        for pattern in patterns:
-            gcc_binaries += glob.glob(pattern)
-        gcc_binaries.sort()
-        if gcc_binaries:
-            _, gcc = os.path.split(gcc_binaries[-1])
-            return gcc
-        else:
-            return None
+    for pattern in patterns:
+        gcc_binaries += glob.glob(pattern)
+    gcc_binaries.sort()
+    if gcc_binaries:
+        _, gcc = os.path.split(gcc_binaries[-1])
+        return gcc
     else:
         return None
 

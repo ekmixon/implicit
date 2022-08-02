@@ -131,7 +131,7 @@ class BayesianPersonalizedRanking(MatrixFactorizationBase):
 
         log.debug("Running %i BPR training epochs", self.iterations)
         with tqdm(total=self.iterations, disable=not show_progress) as progress:
-            for epoch in range(self.iterations):
+            for _ in range(self.iterations):
                 correct, skipped = implicit.gpu.bpr_update(
                     userids,
                     itemids,
@@ -145,7 +145,7 @@ class BayesianPersonalizedRanking(MatrixFactorizationBase):
                 )
                 progress.update(1)
                 total = len(user_items.data)
-                if total != 0 and total != skipped:
+                if total not in [0, skipped]:
                     progress.set_postfix(
                         {
                             "train_auc": "%.2f%%" % (100.0 * correct / (total - skipped)),

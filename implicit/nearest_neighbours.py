@@ -123,7 +123,7 @@ class ItemItemRecommender(RecommenderBase):
     def load(cls, filename):
         # numpy.save automatically appends a npz suffic, numpy.load doesn't apparently
         if not filename.endswith(".npz"):
-            filename = filename + ".npz"
+            filename = f"{filename}.npz"
 
         m = numpy.load(filename)
         similarity = csr_matrix((m["data"], m["indices"], m["indptr"]), shape=m["shape"])
